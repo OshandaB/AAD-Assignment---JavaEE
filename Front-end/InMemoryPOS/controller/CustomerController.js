@@ -29,8 +29,40 @@ $("#clear").click(function () {
 $("#btnSearch").click(function () {
 
     let id = $('#search').val();
+    $('#custTable').empty();
 
-   searchCustomer(id);
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/customer?option=search&id=" + id,
+        success: function (details) {
+            console.log(details);
+            console.log(details.id);
+
+            let row = `<tr>
+                     <td>${details.id}</td>
+                     <td>${details.name}</td>
+                     <td>${details.address}</td>
+                     <td>${details.salary}</td>
+                    </tr>`;
+
+            $('#custTable').append(row);
+            setTextFieldss();
+
+
+
+        },
+        error: function (error) {
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: '"No result found..!',
+            })
+
+
+        }
+    });
+
 
 });
 
@@ -96,9 +128,14 @@ function saveCustomer() {
 }
 
 function updateCustomer(id) {
-    // if (searchCustomer(id) == undefined) {
-    //     alert("No such Customer..please check the ID");
-    // } else {
+    if (searchCustomer(id)) {
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: '"No such Customer..please check the ID..!',
+            })
+    } else {
     let consent = confirm("Do you really want to update this customer.?");
     if (consent) {
         console.log(id);
@@ -133,7 +170,7 @@ function updateCustomer(id) {
 
     }
 
-    // }
+    }
 }
 
 function deleteCustomer(customerId) {
@@ -177,32 +214,25 @@ function deleteCustomer(customerId) {
 
 
 function searchCustomer(id) {
-    $('#custTable').empty();
+
 
     $.ajax({
         type: "GET",
         url: "http://localhost:8080/pos/customer?option=search&id=" + id,
         success: function (details) {
             console.log(details);
-            console.log(details.id);
-
-            let row = `<tr>
-                     <td>${details.id}</td>
-                     <td>${details.name}</td>
-                     <td>${details.address}</td>
-                     <td>${details.salary}</td>
-                    </tr>`;
-
-            $('#custTable').append(row);
-            setTextFieldss();
-            $('#search').val("");
+           return true;
 
 
         },
         error: function (error) {
-            alert("no result found");
-            $('#search').val("");
-            getAllCustomer();
+            console.log(error);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Oops...',
+                text: '"No such Customer..please check the ID..!',
+            })
+                return false;
         }
     });
 }

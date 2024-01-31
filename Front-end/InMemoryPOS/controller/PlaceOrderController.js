@@ -72,45 +72,89 @@ enabledOrDisabledBtn()
 function loadCustomerIds() {
     $('#cmbCust').empty();
     $('#cmbCust').append(`<option selected disabled>Select Customer</option>`);
-    for (const customer of customerDB) {
-        console.log(customer.id)
-        $('#cmbCust').append(`<option>${customer.id}</option>`);
-    }
+
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/customer?option=getAll",
+        success: function (details) {
+            console.log(details);
+            console.log(details.id);
+            for (let customer of details) {
+                $('#cmbCust').append(`<option>${customer.id}</option>`);
+            }
+
+        },
+        error: function (error) {
+
+        }
+    });
+
 }
 
 function loadItemCodes() {
     $('#cmbItem').empty();
     $('#cmbItem').append(`<option selected disabled>Select Items</option>`);
-    for (const items of itemDB) {
 
-        $('#cmbItem').append(`<option>${items.code}</option>`);
-    }
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/item?option=getAll",
+        success: function (details) {
+            console.log(details);
+            console.log(details.id);
+            for (let items of details) {
+                $('#cmbItem').append(`<option>${items.code}</option>`);
+            }
+
+        },
+        error: function (error) {
+
+        }
+    });
+
 }
 
 function setCustomerDetails() {
-    for (const customer of customerDB) {
-        if (customer.id === $('#cmbCust').val()) {
-            $('#cid').val(`${customer.id}`);
-            $('#cname').val(customer.name);
-            $('#address').val(customer.address);
-            $('#salary').val(customer.salary);
-            break;
-        }
 
-    }
+
+
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/customer?option=search&id=" + $('#cmbCust').val(),
+        success: function (details) {
+            console.log(details);
+
+            $('#cid').val(details.id);
+            $('#cname').val(details.name);
+            $('#address').val(details.address);
+            $('#salary').val(details.salary);
+
+        },
+        error: function (error) {
+            console.log(error);
+
+        }
+    });
 }
 
 function setItemDetails() {
-    for (const item of itemDB) {
-        if (item.code === $('#cmbItem').val()) {
-            $('#itemCode').val(`${item.code}`);
-            $('#itemName').val(item.description);
-            $('#paymemt').val(item.unitPrice);
-            $('#qtyH').val(item.qtyOnHand);
-            break;
-        }
 
-    }
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/item?option=search&id=" + $('#cmbItem').val(),
+        success: function (details) {
+            console.log(details);
+
+                    $('#itemCode').val(details.code);
+                    $('#itemName').val(details.description);
+                    $('#paymemt').val(details.unitPrice);
+                    $('#qtyH').val(details.qtyOnHand);
+
+        },
+        error: function (error) {
+            console.log(error);
+
+        }
+    });
 }
 
 function addToCart() {

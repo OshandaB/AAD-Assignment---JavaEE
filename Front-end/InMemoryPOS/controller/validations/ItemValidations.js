@@ -51,8 +51,8 @@ function checkAllItems() {
     return true;
 }
 function setItemBtn() {
-   $('#deleteItem').prop("disabled",true);
-    $('#updateItem').prop("disabled",true);
+   // $('#deleteItem').prop("disabled",true);
+   //  $('#updateItem').prop("disabled",true);
 
     if (checkAllItems()){
         $('#saveItem').prop("disabled", false);
@@ -60,11 +60,11 @@ function setItemBtn() {
         $('#saveItem').prop("disabled", true);
     }
     let id = $("#code").val();
-    if (searchItems(id) === undefined) {
-        $('#deleteItem').prop("disabled", true);
-        $('#updateItem').prop("disabled", true);
-    } else {
-        $('#deleteItem').prop("disabled", false);
-        $('#updateItem').prop("disabled", false);
-    }
+    // if (searchItems(id) === undefined) {
+    //     $('#deleteItem').prop("disabled", true);
+    //     $('#updateItem').prop("disabled", true);
+    // } else {
+    //     $('#deleteItem').prop("disabled", false);
+    //     $('#updateItem').prop("disabled", false);
+    // }
 }
