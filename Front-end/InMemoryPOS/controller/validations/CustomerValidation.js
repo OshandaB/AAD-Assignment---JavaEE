@@ -87,8 +87,8 @@ function checkAll() {
     return true;
 }
 function setBtn() {
-    $('#delete').prop("disabled", true);
-    $('#update').prop("disabled", true);
+    // $('#delete').prop("disabled", true);
+    // $('#update').prop("disabled", true);
 
     if (checkAll()) {
         $('#save').prop("disabled", false);
@@ -96,13 +96,13 @@ function setBtn() {
         $('#save').prop("disabled", true);
     }
 
-    let id = $("#floatingInput").val();
-    if (searchCustomer(id) === undefined) {
-        $('#delete').prop("disabled", true);
-        $('#update').prop("disabled", true);
-    } else {
-        $('#delete').prop("disabled", false);
-        $('#update').prop("disabled", false);
-    }
+    // let id = $("#floatingInput").val();
+    // if (searchCustomer(id) === undefined) {
+    //     $('#delete').prop("disabled", true);
+    //     $('#update').prop("disabled", true);
+    // } else {
+    //     $('#delete').prop("disabled", false);
+    //     $('#update').prop("disabled", false);
+    // }
 
 }

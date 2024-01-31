@@ -2,14 +2,16 @@ let btnSave = $("#save");
 getAllCustomer();
 
 $("#save").click(function () {
-    if (checkAll()){
+    if (checkAll()) {
         saveCustomer();
-    }else{
+    } else {
         alert("Error");
     }
 
 });
-
+$("#getAll").click(function () {
+    getAllCustomer();
+});
 
 $("#update").click(function () {
     let customerId = $('#floatingInput').val();
@@ -25,103 +27,134 @@ $("#clear").click(function () {
     clearTextField();
 });
 $("#btnSearch").click(function () {
+
     let id = $('#search').val();
-    customerDB.find(function (customerM) {
-        if (customerM.id == id) {
-            console.log(id)
-            $('#floatingInput').val(customerM.id);
-            $('#flotingName').val(customerM.name);
-            $('#floatingAddress').val(customerM.address);
-            $('#floatingSalary').val(customerM.salary);
-        }
 
+   searchCustomer(id);
 
-    });
 });
-
 
 
 function saveCustomer() {
     let customerId = $('#floatingInput').val();
-    if (searchCustomer(customerId.trim()) == undefined) {
+    // if (searchCustomer(customerId.trim()) == undefined) {
 
         let customerName = $('#flotingName').val();
         let customerAdddress = $('#floatingAddress').val();
         let customerSalary = $('#floatingSalary').val();
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/pos/customer",
+            contentType: 'application/json',  // Set content type to JSON
+            data: JSON.stringify({
+                id: customerId,
+                name: customerName,
+                address: customerAdddress,
+                salary: customerSalary
+            }),  // Convert data to JSON string
 
-        let newCustomer = Object.assign({}, customerM);
+            success: function (details) {
+                console.log(details);
+                Swal.fire({
+                    position: 'center',
+                    icon: 'success',
+                    title: 'Customer has been saved successfully..!',
+                    showConfirmButton: true,
+                    timer: 2000
+                })
+                clearTextField();
+                getAllCustomer();
 
-        newCustomer.id = customerId;
-        newCustomer.name = customerName;
-        newCustomer.address = customerAdddress;
-        newCustomer.salary = customerSalary;
-        console.log(newCustomer+"amal");
-        customerDB.push(newCustomer);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error: " + textStatus, errorThrown, jqXHR);
+                if (jqXHR.status == 409) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'warning',
+                        title: jqXHR.responseText,
+                        showConfirmButton: true,
+                        timer: 2000
+                    })
+                }
+            }
+        });
 
-        clearTextField();
 
-        getAllCustomer();
-        loadCustomerIds();
-        Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: 'Customer has been saved successfully..!',
-            showConfirmButton: true,
-            timer: 2000
-        })
-    }else {
-        clearTextField();
-        Swal.fire({
-            icon: 'warning',
-            title: 'Oops...',
-            text: 'This customer doesn\'t exist..!',
-        })
-    }
+        //
+        // getAllCustomer();
+        // loadCustomerIds();
+
+    // } else {
+    //     clearTextField();
+    //     Swal.fire({
+    //         icon: 'warning',
+    //         title: 'Oops...',
+    //         text: 'This customer doesn\'t exist..!',
+    //     })
+    // }
 }
 
 function updateCustomer(id) {
-    if (searchCustomer(id) == undefined) {
-        alert("No such Customer..please check the ID");
-    } else {
-        let consent = confirm("Do you really want to update this customer.?");
-        if (consent) {
-            let customer = searchCustomer(id);
-            let customerName = $('#flotingName').val();
-            let customerAdddress = $('#floatingAddress').val();
-            let customerSalary = $('#floatingSalary').val();
-            customer.name = customerName;
-            customer.address = customerAdddress;
-            customer.salary = customerSalary;
-            clearTextField();
-            getAllCustomer()
-            Swal.fire({
-                position: 'top-right',
-                icon: 'success',
-                title: 'Customer has been Updated successfully..!',
-                showConfirmButton: false,
-                timer: 2000
-            })
-        }
+    // if (searchCustomer(id) == undefined) {
+    //     alert("No such Customer..please check the ID");
+    // } else {
+    let consent = confirm("Do you really want to update this customer.?");
+    if (consent) {
+        console.log(id);
+        let customerId = $('#floatingInput').val();
+        let customerName = $('#flotingName').val();
+        let customerAddress = $('#floatingAddress').val();
+        let customerSalary = $('#floatingSalary').val();
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:8080/pos/customer",
+            contentType: 'application/json',  // Set content type to JSON
+            data: JSON.stringify({id: id, name: customerName, address: customerAddress, salary: customerSalary}),  // Convert data to JSON string
+
+            success: function (details) {
+                console.log(details);
+                Swal.fire({
+                    position: 'top-right',
+                    icon: 'success',
+                    title: 'Customer has been Updated successfully..!',
+                    showConfirmButton: false,
+                    timer: 2000
+                })
+                clearTextField();
+                getAllCustomer()
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error: " + textStatus, errorThrown, jqXHR);
+            }
+        });
+
 
     }
+
+    // }
 }
 
 function deleteCustomer(customerId) {
     let consent =
         Swal.fire({
-        position: 'center',
-        icon: 'Warning',
-        title: 'Do you really want to Delete this customer.?',
-        showConfirmButton: true,
-        timer: 2000
-    });
+            position: 'center',
+            icon: 'Warning',
+            title: 'Do you really want to Delete this customer.?',
+            showConfirmButton: true,
+            timer: 2000
+        });
     if (consent) {
-        for (let i = 0; i < customerDB.length; i++) {
-            if (customerDB[i].id === customerId) {
-                customerDB.splice(i, 1);
-                // alert("Delete Successfully!!");
-                clearTextField();
-                getAllCustomer()
+
+        $.ajax({
+            type: "DELETE",
+            url: "http://localhost:8080/pos/customer?id=" + customerId,
+
+            contentType: 'application/json',  // Set content type to JSON
+            // Convert data to JSON string
+
+            success: function (details) {
                 Swal.fire({
                     position: 'top-up',
                     icon: 'success',
@@ -129,9 +162,14 @@ function deleteCustomer(customerId) {
                     showConfirmButton: false,
                     timer: 2000
                 })
-                return true;
+                clearTextField();
+                getAllCustomer()
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error: " + textStatus, errorThrown);
             }
-        }
+        });
+
 
     }
     return false;
@@ -139,39 +177,67 @@ function deleteCustomer(customerId) {
 
 
 function searchCustomer(id) {
-    return customerDB.find(function (customerM) {
-        console.log(customerM.id == id)
-        console.log(id)
-        return customerM.id == id;
+    $('#custTable').empty();
 
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/customer?option=search&id=" + id,
+        success: function (details) {
+            console.log(details);
+            console.log(details.id);
+
+            let row = `<tr>
+                     <td>${details.id}</td>
+                     <td>${details.name}</td>
+                     <td>${details.address}</td>
+                     <td>${details.salary}</td>
+                    </tr>`;
+
+            $('#custTable').append(row);
+            setTextFieldss();
+            $('#search').val("");
+
+
+        },
+        error: function (error) {
+            alert("no result found");
+            $('#search').val("");
+            getAllCustomer();
+        }
     });
 }
 
 
 function getAllCustomer() {
     $('#custTable').empty();
-    for (let i = 0; i < customerDB.length; i++) {
-        let id = customerDB[i].id;
-        let name = customerDB[i].name;
-        let address = customerDB[i].address;
-        let salary = customerDB[i].salary;
 
-
-        let row = `<tr>
-                     <td>${id}</td>
-                     <td>${name}</td>
-                     <td>${address}</td>
-                     <td>${salary}</td>
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/customer?option=getAll",
+        success: function (details) {
+            console.log(details);
+            console.log(details.id);
+            for (let customer of details) {
+                let row = `<tr>
+                     <td>${customer.id}</td>
+                     <td>${customer.name}</td>
+                     <td>${customer.address}</td>
+                     <td>${customer.salary}</td>
                     </tr>`;
 
-        $('#custTable').append(row);
-        setTextFieldss();
+                $('#custTable').append(row);
+                setTextFieldss();
+            }
 
+        },
+        error: function (error) {
 
-    }
+        }
+    });
+
 }
 
-function setTextFieldss() {    let customerId = $('#floatingInput').val();
+function setTextFieldss() {
 
     $('#custTable>tr').click(function () {
         // alert("hi");
@@ -183,7 +249,9 @@ function setTextFieldss() {    let customerId = $('#floatingInput').val();
 
     });
 }
+
 doubleclick();
+
 function doubleclick() {
     $('#custTable>tr').dblclick(function () {
         // alert("hi");
@@ -195,7 +263,7 @@ function doubleclick() {
                 showConfirmButton: true,
                 timer: 2000
             });
-        if (consent){
+        if (consent) {
             $(this).remove();
         }
 
