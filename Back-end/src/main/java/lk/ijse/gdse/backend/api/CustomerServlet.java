@@ -5,7 +5,6 @@ import jakarta.json.bind.JsonbBuilder;
 import lk.ijse.gdse.backend.api.util.ValidationController;
 import lk.ijse.gdse.backend.bo.BOFactory;
 import lk.ijse.gdse.backend.bo.custom.CustomerBO;
-import lk.ijse.gdse.backend.bo.custom.impl.CustomerBOImpl;
 import lk.ijse.gdse.backend.dto.CustomerDTO;
 
 import javax.naming.InitialContext;
@@ -20,8 +19,6 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @WebServlet(name = "CustomerServlet", value = "/customer")
 public class CustomerServlet extends HttpServlet {

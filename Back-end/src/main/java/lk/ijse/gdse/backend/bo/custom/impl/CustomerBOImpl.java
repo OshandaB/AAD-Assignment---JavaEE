@@ -3,7 +3,6 @@ package lk.ijse.gdse.backend.bo.custom.impl;
 import lk.ijse.gdse.backend.bo.custom.CustomerBO;
 import lk.ijse.gdse.backend.dao.DAOFactory;
 import lk.ijse.gdse.backend.dao.custom.CustomerDAO;
-import lk.ijse.gdse.backend.dao.custom.impl.CustomerDAOImpl;
 import lk.ijse.gdse.backend.dto.CustomerDTO;
 import lk.ijse.gdse.backend.entity.Customer;
 

@@ -2,6 +2,7 @@ package lk.ijse.gdse.backend.dao;
 
 import lk.ijse.gdse.backend.bo.BOFactory;
 import lk.ijse.gdse.backend.dao.custom.impl.CustomerDAOImpl;
+import lk.ijse.gdse.backend.dao.custom.impl.ItemDAOImpl;
 
 public class DAOFactory {
 
@@ -13,13 +14,15 @@ public class DAOFactory {
     }
 
     public enum DAOTypes{
-        CUSTOMERDAO
+        CUSTOMERDAO,ITEMDAO
     }
 
     public <T extends SuperDAO> T getDao(DAOTypes daoTypes){
         switch (daoTypes){
             case CUSTOMERDAO:
                 return (T) new CustomerDAOImpl();
+            case ITEMDAO:
+                return (T) new ItemDAOImpl();
         }
         return null;
     }
