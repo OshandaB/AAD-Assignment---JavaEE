@@ -1,8 +1,11 @@
-$('#oId').val(generateNextOrderId());
+generateNextOrderId(function (nextOrderId) {
+    $('#oId').val(nextOrderId);
+});
 $('#Total').text(0.00);
 $('#SubTotal').text(0.00);
 var date = new Date();
-$('#date').val(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+var formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+$('#date').val(formattedDate);
 loadCustomerIds();
 loadItemCodes();
 $('#discount').val(0.00);
@@ -33,10 +36,16 @@ $('#btnCart').on('click', function () {
 $('#purchaseOrder').on('click', function () {
 if (parseFloat($('#cash').val())>= parseFloat($('#SubTotal').text())){
     placeOrderB();
+
     clearPlaceOrderTextFields();
     $('#tblCart').empty();
     cartDetails=[];
-    $('#oId').val(generateNextOrderId());
+    // generateNextOrderId(function (nextOrderId) {
+    //     $('#oId').val(nextOrderId);
+    // });
+
+
+
 
 }else {
     Swal.fire(
@@ -64,10 +73,7 @@ $('#cash').on("keydown keyup", function (e) {
     calculateBalance();
 enabledOrDisabledBtn()
 });
-// $('#discount').keyup(function (e) {
-//
-//
-// });
+
 
 function loadCustomerIds() {
     $('#cmbCust').empty();
@@ -239,49 +245,59 @@ function loadAllItems() {
         $('#tblCart').append(row);
     }
 }
-function placeOrderB() {
-    let orderId = $('#oId').val();
-    let orderDate = $('#date').val();
-    let customerId = $('#cid').val();
-    let iCode = $('#itemCode').val();
-    let orQty =$(this).children(":eq(3)").text();
-    let tota = $(this).children(":eq(4)").text();
-    let orders = Object.assign({},order);
-    orders.oid = orderId;
-    orders.date =orderDate;
-    orders.customerID=customerId;
 
-    orderDB.push(orders);
-
-    for (const tm of cartDetails) {
-        let orderDetail = Object.assign({},orderDetails);
-        orderDetail.oid = orderId;
-        orderDetail.code = tm.itemCode;
-        orderDetail.qty = tm.quantity;
-        orderDetail.payment = tm.total;
-        let items = searchItems( tm.itemCode);
-        if (items!=null){
-            items.qtyOnHand=items.qtyOnHand-tm.quantity;
-
-        }
-        orders.orderDetails.push(orderDetail);
-        console.log(orderDetail.oid+" kamal");
-        console.log(orderDetail.code+" kamal");
-        console.log(orderDetail.qty+" kamal");
-        console.log(orderDetail.payment+" kamal");
-
-
+function getItemDetails() {
+    let rows = $("#tblCart").children().length;
+    var array = [];
+    for (let i = 0; i < rows; i++) {
+        let itCode = $("#tblCart").children().eq(i).children(":eq(0)").text();
+        let itQty = $("#tblCart").children().eq(i).children(":eq(3)").text();
+        let itPrice = $("#tblCart").children().eq(i).children(":eq(4)").text();
+        array.push({code: itCode, qty: itQty, price: itPrice});
     }
-    Swal.fire(
-        'Order Placement successful!',
-        'Order has been placed successfully..!',
-        'success'
-    )
+    return array;
+}
 
+// }
+function placeOrderB() {
 
-generateNextOrderId();
+        let orderId = $("#oId").val();
+        let customerID = $("#cid").val();
+        let orderDate = $("#date").val();
+        let orderDetails = getItemDetails();
+      console.log(orderId);
+    let orderObj ={
+        orderId:orderId ,
+        customerId: customerID,
+        date: orderDate,
+    orderDetails:orderDetails};
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8080/pos/order",
+            contentType: 'application/json',
+            data: JSON.stringify(orderObj),
 
-    console.log(orderDB);
+            success: function (details) {
+                console.log(details);
+                // Handle success response
+                Swal.fire(
+                    'Order Placement successful!',
+                    'Order has been placed successfully..!',
+                    'success'
+                );
+                generateNextOrderId(function (nextOrderId) {
+                    $('#oId').val(nextOrderId);
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("AJAX Error: " + textStatus, errorThrown, jqXHR);
+                Swal.fire(
+                    'Order Placement unsuccessful!',
+                    'Order has been placed unsuccessfully..!',
+                    'error'
+                );
+            }
+        });
 
 }
 
@@ -328,22 +344,32 @@ function calculateBalance() {
 
 
 }
-function generateNextOrderId() {
-let orderId = orderDB[orderDB.length-1].oid;
-    console.log("orderId"+orderId);
- if (orderId!=null){
-      let strings = orderId.split("OID-");
+function generateNextOrderId(callback) {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:8080/pos/order?option=generateNextId",
+        success: function (details) {
+            console.log("generate" + details);
+            let orderId = details;
+            if (orderId != null) {
+                let strings = orderId.split("ORD-");
+                console.log(orderId);
 
+                let id = parseInt(strings[1]);
+                console.log(id);
+                ++id;
+                let digit = id.toString().padStart(3, '0');
 
-     let id= parseInt(strings[1]);
-      console.log(id);
-      ++id;
-    let digit = id.toString().padStart(3, '0');
-
-     return "OID-" + digit;
- }else {
-     return "OID-001";
- }
+                callback("ORD-" + digit);
+            } else {
+                callback("ORD-001");
+            }
+        },
+        error: function (error) {
+            console.log(error);
+            callback("ORD-001");
+        }
+    });
 }
 function enabledOrDisabledBtn() {
     if (($('#cmbCust').val() !==null) && ($('#cmbItem').val() !==null) &&  ($('#cash').val().length!=0) ){

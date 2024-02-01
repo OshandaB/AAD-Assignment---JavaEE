@@ -107,6 +107,7 @@ function saveItems() {
             })
             clearItemTextFields();
             getAllItems();
+            loadItemCodes()
 
         },
         error: function (jqXHR, textStatus, errorThrown) {

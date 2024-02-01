@@ -96,6 +96,7 @@ function saveCustomer() {
                 })
                 clearTextField();
                 getAllCustomer();
+                loadCustomerIds();
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
