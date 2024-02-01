@@ -11,6 +11,9 @@ $('#updateItem').click(function () {
 
     updateItems(itemCode);
 });
+$('#getAllItem').click(function () {
+    getAllItems();
+});
 
 
 $('#deleteItem').click(function () {
@@ -54,15 +57,15 @@ $("#btnItemSearch").click(function () {
             console.log(details.id);
 
             let row = `<tr>
-                     <td>${details.id}</td>
-                     <td>${details.name}</td>
-                     <td>${details.address}</td>
-                     <td>${details.salary}</td>
+                     <td>${details.code}</td>
+                     <td>${details.description}</td>
+                     <td>${details.unitPrice}</td>
+                     <td>${details.qtyOnHand}</td>
                     </tr>`;
 
             $('#tblItems').append(row);
             setTextFieldss();
-            $('#search').val("");
+            $('#txtItemSrh').val("");
 
 
         },

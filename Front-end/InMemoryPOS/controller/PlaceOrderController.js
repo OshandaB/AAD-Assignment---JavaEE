@@ -1,3 +1,5 @@
+let cartDetails=[];
+
 generateNextOrderId(function (nextOrderId) {
     $('#oId').val(nextOrderId);
 });
@@ -54,7 +56,7 @@ if (parseFloat($('#cash').val())>= parseFloat($('#SubTotal').text())){
         'error'
     )
 }
-loadOrderDetails();
+
 
 });
 $('#oqty').on("keydown keyup", function (e) {
@@ -288,6 +290,7 @@ function placeOrderB() {
                 generateNextOrderId(function (nextOrderId) {
                     $('#oId').val(nextOrderId);
                 });
+                loadOrderDetails();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log("AJAX Error: " + textStatus, errorThrown, jqXHR);

@@ -511,6 +511,7 @@
                     <button id="updateItem" type="button" class="btn btn-warning">Update</button>
                     <button id="saveItem" type="button" class="btn btn-success">Save</button>
                     <button id="clearItem" class="btn btn-danger">Clear All</button>
+                    <button id="getAllItem" type="button" class="btn btn-primary">Get All</button>
 
                 </div>
                 <div class="table-responsive  mt-5  " style="height: 200px">
@@ -811,31 +812,8 @@
                         </form>
                     </div>
                 </nav>
-                <div class="form-floating mb-3 p-1">
-                    <input type="text" class="form-control" id="orId" placeholder="name@example.com">
-                    <label for="orId">Order Id</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="iCode" placeholder="Password">
-                    <label for="iCode">Item Code</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="csId" placeholder="Password">
-                    <label for="csId">Customer ID</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="pay" placeholder="Password">
-                    <label for="pay">Payment</label>
-                </div>
 
-                <div class="btn-group  mt-3" role="group" aria-label="Basic mixed styles example">
-                    <button type="button" class="btn btn-danger">Delete</button>
-                    <button type="button" class="btn btn-warning">Update</button>
-                    <button type="button" class="btn btn-success">Save</button>
-                    <button class="btn btn-danger" id="btn-clear1">Clear All</button>
-
-                </div>
-                <div class="table-responsive  mt-5 " style="height: 200px">
+                <div class="table-responsive  mt-5 " style="height: 500px">
                     <table class="table table-bordered table-hover table-striped-columns ">
 
                         <thead>
@@ -916,7 +894,6 @@
 <script src="assests/boostraps/js/code.jquery.com_jquery-3.7.1.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="controller/DashboardController.js"></script>
-<script src="db/db.js"></script>
 
 
 <script src="model/CartTM.js"></script>
