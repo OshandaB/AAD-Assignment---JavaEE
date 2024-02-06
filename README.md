@@ -69,5 +69,5 @@ To run the POS system backend locally, follow these steps:
 Contributions are welcome! Please follow our contribution guidelines to get started.
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under MIT License. See the [LICENSE.md] (https://github.com/OshandaB/AAD-Assignment-JavaEE/blob/master/LICENSE) file for details.
 
